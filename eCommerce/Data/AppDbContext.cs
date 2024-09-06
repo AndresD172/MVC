@@ -8,6 +8,6 @@ namespace eCommerce.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // Agregamos los modelos correspondientes a cada tabla de la base de datos
-        DbSet<Category> category { get; set; }
+        public DbSet<Category> Category { get; set; }
     }
 }
