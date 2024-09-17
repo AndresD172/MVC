@@ -10,7 +10,7 @@ using eCommerce.Data;
 
 namespace eCommerce.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240906205131_createCategoryTable")]
     partial class createCategoryTable
     {
