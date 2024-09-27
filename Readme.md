@@ -1,5 +1,11 @@
-Link de la reunión:
+Link de la reuniÃ³n:
 - https://meet.google.com/fhq-fumq-dey
 
-Link del código de vistas:
+Link del cÃ³digo de vistas:
 - https://docs.google.com/document/d/1vaAqUSfVgkBIW4qhtYtzHyudkNhHV-_bbWUzQ5ja9EI/edit
+
+****
+
+Por hacer:
+
+- AÃ±adir los IDs de las foreign keys del modelo ``Producto``.
