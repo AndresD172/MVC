@@ -1,17 +1,23 @@
 ﻿using eCommerce.Data;
+using eCommerce.Models;
+using eCommerce.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace eCommerce.Controllers
 {
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -23,38 +29,71 @@ namespace eCommerce.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> categories = _context.Category.Select(x => new SelectListItem {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            });
-
-            ViewBag.categoriesDropDownContent = categories;
-
-            IEnumerable<SelectListItem> tiposAplicacion = _context.TipoAplicacion.Select(x => new SelectListItem
+            ProductViewModel productViewModel = new ProductViewModel()
             {
-                Text = x.Nombre,
-                Value = x.Id.ToString()
-            });
+                Product = new Product(),
 
-            ViewBag.TiposAplicacionDropDownContent = tiposAplicacion;
+                Categories = _context.Category.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                }),
 
-            Product? product = new Product();
-            
+                TipoAplicacion = _context.TipoAplicacion.Select(c => new SelectListItem
+                {
+                    Text = c.Nombre,
+                    Value = c.Id.ToString()
+                }),
+            };
+
             if (id == null)
             {
-                product = new Product();
-
-                return View(product);
+                return View(productViewModel);
             }
 
-            product = _context.Product.Find(id);
+            productViewModel.Product = _context.Product.Find(id);
 
-            if (product == null)
+            if (productViewModel.Product == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(productViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Upsert(ProductViewModel productViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(productViewModel);
+            }
+
+            if (productViewModel.Product.Id == 0)
+            {
+                // Lógica de actualización
+                
+            }
+
+            var files = HttpContext.Request.Form.Files;
+            string webRootPath = _webHostEnvironment.WebRootPath;
+
+            string uploadPath = webRootPath + Constrains.ImageUrl;
+            string filename = Guid.NewGuid().ToString();
+            string extension = Path.GetExtension(files[0].FileName);
+
+            using (var fileStream = new FileStream(Path.Combine(uploadPath, filename + extension), FileMode.Create))
+            {
+                files[0].CopyTo(fileStream);
+            };
+
+            productViewModel.Product.ImageUrl = filename + extension;
+
+            _context.Product.Add(productViewModel.Product);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
