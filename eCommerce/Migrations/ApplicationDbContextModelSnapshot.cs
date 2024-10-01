@@ -49,7 +49,7 @@ namespace eCommerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryKey")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -57,7 +57,6 @@ namespace eCommerce.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -71,14 +70,14 @@ namespace eCommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TipoAplicacionKey")
+                    b.Property<int>("TipoAplicacionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryKey");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("TipoAplicacionKey");
+                    b.HasIndex("TipoAplicacionId");
 
                     b.ToTable("Product");
                 });
@@ -104,13 +103,13 @@ namespace eCommerce.Migrations
                 {
                     b.HasOne("eCommerce.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryKey")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("eCommerce.Models.TipoAplicacion", "TipoAplicacion")
                         .WithMany()
-                        .HasForeignKey("TipoAplicacionKey")
+                        .HasForeignKey("TipoAplicacionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -1,5 +1,6 @@
 ﻿using eCommerce.Data;
 using eCommerce.Models;
+using eCommerce.Utils;
 using eCommerce.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,7 +25,7 @@ namespace eCommerce.Controllers
         {
             IEnumerable<Product> products = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion);
 
-            return View();
+            return View(products);
         }
 
         public IActionResult Upsert(int? id)
@@ -70,27 +71,83 @@ namespace eCommerce.Controllers
                 return View(productViewModel);
             }
 
-            if (productViewModel.Product.Id == 0)
+            IFormFileCollection files = HttpContext.Request.Form.Files;
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string uploadPath = webRootPath + Constrains.ImageUrl;
+            string filePath = String.Empty;
+
+            if (productViewModel.Product.Id != 0)
             {
-                // Lógica de actualización
+                Product? product = _context.Product.AsNoTracking().FirstOrDefault(x => x.Id == productViewModel.Product.Id);
+
+                filePath = product.ImageUrl;
+
+                if (files.Count() > 0)
+                {
+                    string file = Path.Combine(uploadPath, filePath);
+
+                    if (System.IO.File.Exists(file))
+                    {
+                        System.IO.File.Delete(file);
+                    }
+
+                    filePath = FileUtils.WriteImage(uploadPath, files);
+                }
                 
+                productViewModel.Product.ImageUrl = filePath;
+
+                _context.Product.Update(productViewModel.Product);
+            }
+            else
+            {
+                filePath = FileUtils.WriteImage(uploadPath, files);
+
+                productViewModel.Product.ImageUrl = filePath;
+
+                _context.Product.Add(productViewModel.Product);
             }
 
-            var files = HttpContext.Request.Form.Files;
-            string webRootPath = _webHostEnvironment.WebRootPath;
+            _context.SaveChanges();
 
-            string uploadPath = webRootPath + Constrains.ImageUrl;
-            string filename = Guid.NewGuid().ToString();
-            string extension = Path.GetExtension(files[0].FileName);
+            return RedirectToAction("Index");
+        }
 
-            using (var fileStream = new FileStream(Path.Combine(uploadPath, filename + extension), FileMode.Create))
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
             {
-                files[0].CopyTo(fileStream);
-            };
+                return NotFound();
+            }
 
-            productViewModel.Product.ImageUrl = filename + extension;
+            Product? product = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion).FirstOrDefault(x => x.Id == id);
 
-            _context.Product.Add(productViewModel.Product);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Product product)
+        {
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string uploadPath = webRootPath + Constrains.ImageUrl;
+            string file = Path.Combine(uploadPath, product.ImageUrl);
+
+            if (System.IO.File.Exists(file))
+            {
+                System.IO.File.Delete(file);
+            }
+
+            _context.Product.Remove(product);
             _context.SaveChanges();
 
             return RedirectToAction("Index");

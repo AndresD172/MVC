@@ -1,8 +1,38 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model eCommerce.ViewModels.HomeViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="text-center">
+        <button class="btn btn-dark filter-button" data-filter="all">Todos</button>
+        @foreach (var category in Model.Categories)
+        {
+            <button class="btn btn-outline-secondary filter-button" data-filter="@category.Name.Replace(' ', '_')">
+                @category.Name
+            </button>
+        }
+    </div>
+    <br />
+    <div class="row">
+        @foreach (var product in Model.Products)
+        {
+            <partial name="./PartialViews/_ProductCard" model="product" />
+        }
+    </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".filter-button").click(function () {
+                var value = $(this).attr('data-filter'); // Obtiene el valor del atributo data-filter del botón clicado
+                if (value == "all") { // Si el valor es "all"
+                    $('.filter').show('1000'); // Muestra todos los elementos con la clase filter en 1000 milisegundos
+                }
+                else {
+                    $(".filter").not('.' + value).hide('3000'); // Oculta todos los elementos que no tienen la clase especificada en 3000 milisegundos
+                    $('.filter').filter('.' + value).show('3000'); // Muestra los elementos que tienen la clase especificada en 3000 milisegundos
+                }
+            });
+        });
+    </script>
+}
