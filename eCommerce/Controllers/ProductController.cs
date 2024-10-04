@@ -40,7 +40,7 @@ namespace eCommerce.Controllers
                     Value = c.Id.ToString()
                 }),
 
-                TipoAplicacion = _context.TipoAplicacion.Select(c => new SelectListItem
+                TipoAplicacion = _context.AppType.Select(c => new SelectListItem
                 {
                     Text = c.Nombre,
                     Value = c.Id.ToString()
@@ -73,7 +73,7 @@ namespace eCommerce.Controllers
 
             IFormFileCollection files = HttpContext.Request.Form.Files;
             string webRootPath = _webHostEnvironment.WebRootPath;
-            string uploadPath = webRootPath + Constrains.ImageUrl;
+            string uploadPath = webRootPath + Constants.ImageUrl;
             string filePath = String.Empty;
 
             if (productViewModel.Product.Id != 0)
@@ -139,7 +139,7 @@ namespace eCommerce.Controllers
             }
 
             string webRootPath = _webHostEnvironment.WebRootPath;
-            string uploadPath = webRootPath + Constrains.ImageUrl;
+            string uploadPath = webRootPath + Constants.ImageUrl;
             string file = Path.Combine(uploadPath, product.ImageUrl);
 
             if (System.IO.File.Exists(file))

@@ -8,4 +8,4 @@ Link del código de vistas:
 
 Por hacer:
 
-- Añadir los IDs de las foreign keys del modelo ``Producto``.
+- Pedirle a Gabo las partes faltantes del código.

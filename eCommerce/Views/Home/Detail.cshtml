@@ -1,0 +1,68 @@
+﻿@model eCommerce.ViewModels.DetailViewModel
+
+<div class="">
+    <form method="post">
+
+        <div class="container backgroundWhite pt-4">
+            <div class="card" style="border:1px solid #000000; ">
+                <div class="card-header bg-dark text-light ml-0 row container" style="border-radius: 0px;">
+                    <div class="col-12 col-md-6">
+                        <!-- Utiliza Razor para mostrar el nombre del producto -->
+                        <h1 class="text-white">@Model.Product.Name</h1>
+                    </div>
+                    <div class="col-12 col-md-6 text-md-end">
+                        <!-- Utiliza Razor para mostrar el precio del producto en formato de moneda -->
+                        <h1 class="text-warning"> @((Model.Product.Price).ToString("c"))</h1>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container rounded p-2">
+                        <div class="row">
+                            <div class="col-12 col-lg-4 p-1 text-center">
+                                <!-- Utiliza Razor para mostrar la imagen del producto -->
+                                <img src="@Constants.ImageUrl@Model.Product.ImageUrl" width="100%" class="rounded" />
+                            </div>
+                            <div class="col-12 col-lg-8">
+                                <div class="row pl-3">
+
+                                    <div class="col-12">
+                                        <!-- Utiliza Razor para mostrar la categoría y el tipo de aplicación del producto -->
+                                        <span class="badge p-3 border text-dark" style="background-color:lavenderblush">@Model.Product.Category.Name</span>
+                                        <span class="badge p-3 border text-dark" style="background-color:azure">@Model.Product.TipoAplicacion.Nombre</span>
+                                        <h3 class="text-success"></h3>
+
+                                        <!-- Utiliza Razor para mostrar la descripción del producto -->
+                                        <p class="text-secondary">@Html.Raw(Model.Product.Description)</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-dark">
+                    <div class="row">
+                        <div class="col-12 col-md-6 pb-1 ">
+                            <!-- Enlace para regresar a la página principal -->
+                            <a asp-action="Index" class="btn btn-success btn-square form-control btn-lg" style="height:50px;">Regresar</a>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <!-- Condicional Razor para verificar si el producto existe en el carrito -->
+                            @if (Model.isInCart)
+                            {
+                                <!-- Enlace para remover el producto del carrito -->
+                                <a asp-action="RemoveFromCart" asp-route-Id="@Model.Product.Id" class="btn btn-warning btn-square form-control btn-lg" style="height:50px;">Remover del Carro</a>
+                            }
+                            else
+                            {
+                                <!-- Botón para agregar el producto al carrito -->
+                                <button type="submit" class="btn btn-info form-control btn-lg" style="height:50px;">Agregar al Carro</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+

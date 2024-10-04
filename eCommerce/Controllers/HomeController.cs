@@ -1,9 +1,12 @@
 using eCommerce.Data;
 using eCommerce.Models;
 using eCommerce.ViewModels;
+using eCommerce.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Client;
 
 namespace eCommerce.Controllers
 {
@@ -37,13 +40,69 @@ namespace eCommerce.Controllers
 
         public IActionResult Detail(int id)
         {
+            List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
+
+            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(Constants.ShoppingCartSession) != null
+                && HttpContext.Session.Get<IEnumerable<ShoppingCart>>(Constants.ShoppingCartSession).Count() > 0)
+            {
+                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(Constants.ShoppingCartSession);
+            }
+
             DetailViewModel vm = new DetailViewModel
             {
                 Product = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion).Where(p => p.Id == id).FirstOrDefault(),
                 isInCart = false
             };
 
+            foreach (var item in shoppingCarts)
+            {
+                if (item.ProductId == id)
+                {
+                    vm.isInCart = true;
+                }
+            }
+
             return View(vm);
+        }
+
+        [HttpPost, ActionName("Detail")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DetailPost(int id)
+        {
+            List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
+
+            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(Constants.ShoppingCartSession) != null
+                && HttpContext.Session.Get<IEnumerable<ShoppingCart>>(Constants.ShoppingCartSession).Count() > 0)
+            {
+                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(Constants.ShoppingCartSession);
+            }
+
+            shoppingCarts.Add(new ShoppingCart { ProductId = id });
+            HttpContext.Session.Set(Constants.ShoppingCartSession, shoppingCarts);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult RemoveFromCart(int id)
+        {
+            List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
+
+            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(Constants.ShoppingCartSession) != null
+                && HttpContext.Session.Get<IEnumerable<ShoppingCart>>(Constants.ShoppingCartSession).Count() > 0)
+            {
+                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(Constants.ShoppingCartSession);
+            }
+
+            var productToRemove = shoppingCarts.SingleOrDefault(x => x.ProductId == id);
+
+            if (productToRemove != null)
+            {
+                shoppingCarts.Remove(productToRemove);
+            }
+
+            HttpContext.Session.Set(Constants.ShoppingCartSession, shoppingCarts);
+
+            return RedirectToAction("Index");
         }
     }
 }

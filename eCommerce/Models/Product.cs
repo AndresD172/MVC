@@ -31,6 +31,6 @@ namespace eCommerce.Models
         [ForeignKey("TipoAplicacionId")]
         public int TipoAplicacionId { get; set; }
 
-        public virtual TipoAplicacion? TipoAplicacion { get; set; }
+        public virtual AppType? TipoAplicacion { get; set; }
     }
 }
