@@ -23,7 +23,7 @@ namespace eCommerce.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> products = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion);
+            IEnumerable<Product> products = _context.Product.Include(x => x.Category).Include(x => x.AppType);
 
             return View(products);
         }
@@ -40,9 +40,9 @@ namespace eCommerce.Controllers
                     Value = c.Id.ToString()
                 }),
 
-                TipoAplicacion = _context.AppType.Select(c => new SelectListItem
+                AppTypes = _context.AppType.Select(c => new SelectListItem
                 {
-                    Text = c.Nombre,
+                    Text = c.Name,
                     Value = c.Id.ToString()
                 }),
             };
@@ -119,7 +119,7 @@ namespace eCommerce.Controllers
                 return NotFound();
             }
 
-            Product? product = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion).FirstOrDefault(x => x.Id == id);
+            Product? product = _context.Product.Include(x => x.Category).Include(x => x.AppType).FirstOrDefault(x => x.Id == id);
 
             if (product == null)
             {

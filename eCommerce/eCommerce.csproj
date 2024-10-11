@@ -19,11 +19,13 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
+		<PackageReference Include="SendGrid" Version="9.29.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
-	  <Folder Include="wwwroot\Assets\Products\" />
+	  <Folder Include="wwwroot\Assets\NewFolder\" />
+	  <Folder Include="wwwroot\Assets\Products\NewFolder\" />
 	</ItemGroup>
 
 </Project>

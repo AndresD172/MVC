@@ -7,6 +7,6 @@ namespace eCommerce.ViewModels
     {
         public Product? Product { get; set; }
         public IEnumerable<SelectListItem>? Categories { get; set; }
-        public IEnumerable<SelectListItem>? TipoAplicacion { get; set; }
+        public IEnumerable<SelectListItem>? AppTypes { get; set; }
     }
 }

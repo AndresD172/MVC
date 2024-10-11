@@ -1,6 +1,8 @@
 using eCommerce.Data;
+using eCommerce.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,19 +13,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
                                                     builder.Configuration.GetConnectionString("DefaultConnection")
                                                 )
                                            );
-
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(1);
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-//    .AddDefaultTokenProviders()
-//    .AddDefaultUI()
-//    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 

@@ -12,7 +12,7 @@ namespace eCommerce.Utils
         public static T Get<T>(this ISession session, string key)
         {
             var value = session.GetString(key);
-            return value != null ? JsonSerializer.Deserialize<T>(value) : default;
+            return value == null ? default : JsonSerializer.Deserialize<T>(value);
         }
     }
 }

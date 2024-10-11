@@ -10,7 +10,7 @@ namespace eCommerce.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio")]
-        public string Nombre { get; set; }
+        public string Name { get; set; }
 
     }
 }

@@ -95,14 +95,14 @@ namespace eCommerce.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Eliminar(AppType tipoAplicacion)
+        public IActionResult Delete(AppType AppType)
         {
-            if (tipoAplicacion == null)
+            if (AppType == null)
             {
                 return NotFound();
             }
 
-            _context.Remove(tipoAplicacion);
+            _context.Remove(AppType);
             _context.SaveChanges();
 
             return RedirectToAction("Index");

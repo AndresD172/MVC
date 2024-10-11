@@ -241,7 +241,7 @@ namespace eCommerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -278,6 +278,9 @@ namespace eCommerce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AppTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -299,14 +302,11 @@ namespace eCommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TipoAplicacionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("AppTypeId");
 
-                    b.HasIndex("TipoAplicacionId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Product");
                 });
@@ -375,21 +375,21 @@ namespace eCommerce.Migrations
 
             modelBuilder.Entity("eCommerce.Models.Product", b =>
                 {
+                    b.HasOne("eCommerce.Models.AppType", "AppType")
+                        .WithMany()
+                        .HasForeignKey("AppTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eCommerce.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eCommerce.Models.AppType", "TipoAplicacion")
-                        .WithMany()
-                        .HasForeignKey("TipoAplicacionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("AppType");
 
                     b.Navigation("Category");
-
-                    b.Navigation("TipoAplicacion");
                 });
 #pragma warning restore 612, 618
         }

@@ -28,9 +28,9 @@ namespace eCommerce.Models
 
         public virtual Category? Category { get; set; }
 
-        [ForeignKey("TipoAplicacionId")]
-        public int TipoAplicacionId { get; set; }
+        [ForeignKey("AppTypeId")]
+        public int AppTypeId { get; set; }
 
-        public virtual AppType? TipoAplicacion { get; set; }
+        public virtual AppType? AppType { get; set; }
     }
 }

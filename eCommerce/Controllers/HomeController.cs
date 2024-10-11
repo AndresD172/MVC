@@ -25,7 +25,7 @@ namespace eCommerce.Controllers
         {
             HomeViewModel vm = new HomeViewModel
             {
-                Products = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion),
+                Products = _context.Product.Include(x => x.Category).Include(x => x.AppType),
                 Categories = _context.Category
             };
 
@@ -50,7 +50,7 @@ namespace eCommerce.Controllers
 
             DetailViewModel vm = new DetailViewModel
             {
-                Product = _context.Product.Include(x => x.Category).Include(x => x.TipoAplicacion).Where(p => p.Id == id).FirstOrDefault(),
+                Product = _context.Product.Include(x => x.Category).Include(x => x.AppType).Where(p => p.Id == id).FirstOrDefault(),
                 isInCart = false
             };
 

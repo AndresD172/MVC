@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using eCommerce.Models;
 
 namespace eCommerce.Areas.Identity.Pages.Account
 {
@@ -26,18 +27,21 @@ namespace eCommerce.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserStore<IdentityUser> _userStore;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -79,6 +83,16 @@ namespace eCommerce.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Name")]
+            public string Name { get; set; }
+
+            [Required]
+            [DataType(DataType.PhoneNumber)]
+            [Display(Name = "Phone number")]
+            public string PhoneNumber { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -102,6 +116,16 @@ namespace eCommerce.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if (!await _roleManager.RoleExistsAsync(Constants.AdminRole))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Constants.AdminRole));
+            }
+
+            if (!await _roleManager.RoleExistsAsync(Constants.CustomerRole))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Constants.CustomerRole));
+            }
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -112,7 +136,14 @@ namespace eCommerce.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new User
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    PhoneNumber = Input.PhoneNumber,
+                    Name = Input.Name
+                };
+
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -121,6 +152,18 @@ namespace eCommerce.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    IList<IdentityUser> admins = await _userManager.GetUsersInRoleAsync(Constants.AdminRole);
+
+                    if (admins.Any() == false)
+                    {
+                        await _userManager.AddToRoleAsync(user, Constants.AdminRole);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, Constants.CustomerRole);
+                    }
+
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
