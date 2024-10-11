@@ -1,8 +1,8 @@
-using eCommerce.Data;
-using eCommerce.Utils;
+using Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 

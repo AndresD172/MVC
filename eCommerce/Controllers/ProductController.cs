@@ -1,12 +1,10 @@
-﻿using eCommerce.Data;
-using eCommerce.Models;
-using eCommerce.Utils;
+﻿using Data;
 using eCommerce.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Models;
+using Utilities;
 
 namespace eCommerce.Controllers
 {

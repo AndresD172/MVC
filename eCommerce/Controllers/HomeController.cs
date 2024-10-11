@@ -1,12 +1,10 @@
-using eCommerce.Data;
-using eCommerce.Models;
+using Data;
 using eCommerce.ViewModels;
-using eCommerce.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Identity.Client;
+using Utilities;
 
 namespace eCommerce.Controllers
 {

@@ -1,7 +1,8 @@
-﻿using eCommerce.Data;
-using eCommerce.Models;
+﻿using Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Models;
+using Utilities;
 
 namespace eCommerce.Controllers
 {

@@ -1,10 +1,10 @@
-﻿using eCommerce.Data;
-using eCommerce.Models;
-using eCommerce.Utils;
+﻿using Data;
+using eCommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Win32.SafeHandles;
+using Models;
 using System.Security.Claims;
+using Utilities;
 
 namespace eCommerce.Controllers
 {
@@ -75,9 +75,17 @@ namespace eCommerce.Controllers
                 shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(Constants.ShoppingCartSession);
             }
 
-            List<int> cartElements = shoppingCarts.Select(i => i.ProductId).ToList();
+            List<int> cartElements = shoppingCarts.Select(x => x.ProductId).ToList();
 
+            IEnumerable<Product> products = _context.Product.Where(x => cartElements.Contains(x.Id));
 
+            UserCartViewModel userCartViewModel = new UserCartViewModel
+            {
+                User = _context.User.FirstOrDefault(x => x.Id == claim.Value),
+                Products = products.ToList(),
+            };
+
+            return View(userCartViewModel);
         }
     }
 }
