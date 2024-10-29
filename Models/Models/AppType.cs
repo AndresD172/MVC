@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
+using Utilities;
 
 namespace Models
 {
-    // Refactor later
+    [Authorize(Roles = Constants.AdminRole)]
     public class AppType
     {
         [Key]

@@ -17,7 +17,7 @@ namespace Utilities
         public Task SendEmailAsync(string email, string subject, string message)
         {
             SendGridClient client = new SendGridClient(ApiKey);
-            EmailAddress from = new EmailAddress("mauricio.vargas@covao.ed.cr");
+            EmailAddress from = new EmailAddress("andres.chacon.mora@covao.ed.cr");
             EmailAddress to = new EmailAddress(email);
             SendGridMessage msg = MailHelper.CreateSingleEmail(from, to, subject, "", message);
 
